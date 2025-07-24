@@ -7,7 +7,7 @@ export default function LandingPage() {
     { href: "webp-to-png", label: "webp to png" },
     { href: "formatter/json", label: "JSON formatter" },
     { href: "color-picker", label: "Color Picker" },
-    { href: "image-resizer", label: "Image Resizer" },
+    { href: "image-cropper", label: "Image Cropper" },
   ];
 
   return (
@@ -17,8 +17,9 @@ export default function LandingPage() {
           <h1 className="text-hero">CommonTools</h1>
 
           <p className="text-muted-foreground text-lg">
-            A collection of common tools that run in your browser. Free, open
-            source, no ads, and your files never leave your computer.
+            Useful tools that run entirely in your browser. Built for developers
+            and designers. Free to use, no ads, and fully private. Your files
+            never leave your device.
           </p>
         </div>
 

@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { CodeEditor } from "@/components/CodeEditor";
 export default function FormatterPage() {
   return (
