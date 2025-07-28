@@ -1,23 +1,35 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import { Sun, Moon } from "lucide-react";
 
 const ToggleTheme = () => {
+  const [isDark, setIsDark] = useState(false);
+
   useEffect(() => {
     const saved = localStorage.getItem("theme");
-    if (saved) {
-      document.documentElement.classList.toggle("dark", saved === "dark");
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      document.documentElement.classList.add("dark");
-    }
+
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+    const useDark = saved === "dark" || (!saved && prefersDark);
+
+    document.documentElement.classList.toggle("dark", useDark);
+    setIsDark(useDark);
   }, []);
 
   const toggleTheme = () => {
     const root = document.documentElement;
-    const isDark = root.classList.toggle("dark");
-    localStorage.setItem("theme", isDark ? "dark" : "light");
+    const newIsDark = root.classList.toggle("dark");
+    localStorage.setItem("theme", newIsDark ? "dark" : "light");
+    setIsDark(newIsDark);
   };
 
-  return <button onClick={() => toggleTheme()}>toggle</button>;
+  return (
+    <Button variant="ghost" onClick={toggleTheme}>
+      {isDark ? <Sun /> : <Moon />}
+    </Button>
+  );
 };
 
 export default ToggleTheme;

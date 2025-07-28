@@ -1,3 +1,29 @@
+export const fileConverterSlugs = [
+  "jpeg-to-jpg",
+  "jpeg-to-png",
+  "jpeg-to-webp",
+  "jpg-to-jpeg",
+  "jpg-to-png",
+  "jpg-to-webp",
+
+  "png-to-jpeg",
+  "png-to-jpg",
+  "png-to-webp",
+
+  "webp-to-jpeg",
+  "webp-to-jpg",
+  "webp-to-png",
+
+  "heic-to-jpg",
+  "heic-to-png",
+  "heic-to-jpeg",
+
+  "png-converter",
+  "jpg-converter",
+  "jpeg-converter",
+  "heic-converter",
+];
+
 export type ImageType = "jpg" | "jpeg" | "png" | "webp" | "heic";
 
 export type ImageMimeType =
@@ -17,7 +43,7 @@ export const extensionToMimeType: Record<ImageType, ImageMimeType> = {
 
 export const getAcceptedFormat = (imageType: ImageType) => {
   if (imageType === "jpg" || imageType === "jpeg") return ".jpg,.jpeg";
-  return imageType;
+  return `.${imageType}`;
 };
 
 export const middleEllipsis = (str: string, maxLength: number) => {
@@ -35,4 +61,29 @@ export const formatFileSize = (bytes: number): string => {
   if (bytes >= MB) return `(${(bytes / MB).toFixed(1)} MB)`;
   if (bytes >= KB) return `(${(bytes / KB).toFixed(1)} KB)`;
   return `(${bytes.toFixed(1)} B)`;
+};
+
+export const convertImage = async (file: File, toFormat: ImageMimeType) => {
+  const img = new Image();
+  img.src = URL.createObjectURL(file);
+
+  await new Promise((res) => {
+    img.onload = res;
+  });
+
+  const canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+  const ctx = canvas.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+
+  return new Promise<Blob>((resolve) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) resolve(blob);
+      },
+      toFormat,
+      1,
+    );
+  });
 };

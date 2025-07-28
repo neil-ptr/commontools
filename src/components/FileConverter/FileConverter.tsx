@@ -2,14 +2,14 @@
 
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FileListItem from "./FileListItem";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import {
+  convertImage,
   extensionToMimeType,
   getAcceptedFormat,
-  ImageMimeType,
   ImageType,
 } from "@/lib/fileConverter";
 
@@ -24,6 +24,12 @@ const FileConverter = ({ sourceFormat, targetFormat }: FileConverterProps) => {
   const [files, setFiles] = useState<FileConversionItem[]>([]);
   const [shouldScroll, setShouldScroll] = useState(false);
   const [converting, setConverting] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleSelectFiles = () => {
+    fileInputRef.current?.click();
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -48,35 +54,8 @@ const FileConverter = ({ sourceFormat, targetFormat }: FileConverterProps) => {
     }
   }, [files, shouldScroll]);
 
-  const convertImage = async (file: File, toFormat: ImageMimeType) => {
-    const img = new Image();
-    img.src = URL.createObjectURL(file);
-
-    await new Promise((res) => {
-      img.onload = res;
-    });
-
-    const canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext("2d")!;
-    ctx.drawImage(img, 0, 0);
-
-    return new Promise<Blob>((resolve) => {
-      canvas.toBlob(
-        (blob) => {
-          if (blob) resolve(blob);
-        },
-        toFormat,
-        1,
-      );
-    });
-  };
-
-  const convert = async () => {
+  const handleConvertAndDownload = async () => {
     setConverting(true);
-
-    await new Promise((r) => requestAnimationFrame(r));
 
     const zip = new JSZip();
 
@@ -129,7 +108,7 @@ const FileConverter = ({ sourceFormat, targetFormat }: FileConverterProps) => {
             <Button
               id="download-converted-files-button"
               className="font-semibold"
-              onClick={() => convert()}
+              onClick={handleConvertAndDownload}
               disabled={converting}
             >
               {converting ? <Spinner /> : "Convert & Download"}
@@ -138,10 +117,11 @@ const FileConverter = ({ sourceFormat, targetFormat }: FileConverterProps) => {
         </div>
       ) : (
         <label htmlFor="file-upload" className="bg-transparent">
-          <div className="p-2 rounded-lg">
-            <div className="block cursor-pointer rounded-xl border border-dashed border-accent p-4 py-10 text-center transition">
+          <div className="p-2 bg-accent rounded-lg">
+            <div className="block cursor-pointer rounded-xl border border-dashed border-muted-foreground p-4 py-10 text-center transition">
               <div className="py-20">
                 <input
+                  ref={fileInputRef}
                   id="file-upload"
                   type="file"
                   accept={getAcceptedFormat(sourceFormat)}
@@ -149,9 +129,13 @@ const FileConverter = ({ sourceFormat, targetFormat }: FileConverterProps) => {
                   onChange={handleChange}
                   className="hidden"
                 />
-                <p className="text-foreground font-medium">
+                <Button
+                  onClick={handleSelectFiles}
+                  className="font-medium"
+                  variant="outline"
+                >
                   Click to choose files
-                </p>
+                </Button>
                 <p className="text-sm text-muted-foreground">
                   .{sourceFormat} → .{targetFormat}
                 </p>

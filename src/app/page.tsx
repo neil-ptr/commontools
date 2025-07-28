@@ -17,9 +17,8 @@ export default function LandingPage() {
           <h1 className="text-hero">CommonTools</h1>
 
           <p className="text-muted-foreground text-lg">
-            Useful tools that run entirely in your browser. Built for developers
-            and designers. Free to use, no ads, and fully private. Your files
-            never leave your device.
+            Fast, private and ad-free tools for developers and designers.
+            Everything runs in your browser and nothing gets uploaded.{" "}
           </p>
         </div>
 
