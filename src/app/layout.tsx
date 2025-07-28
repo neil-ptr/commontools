@@ -24,7 +24,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-[100vh]`}
       >
         <Header />
-        <main className="flex-grow">{children}</main>
+        <main className="grow min-h-0">{children}</main>
         <Toaster position="bottom-center" />
       </body>
     </html>

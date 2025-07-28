@@ -1,15 +1,15 @@
 import Link from "next/link";
 
-export default function LandingPage() {
-  const tools = [
-    { href: "jpeg-to-png", label: "jpeg to png" },
-    { href: "heic-to-png", label: "heic to png" },
-    { href: "webp-to-png", label: "webp to png" },
-    { href: "formatter/json", label: "JSON formatter" },
-    { href: "color-picker", label: "Color Picker" },
-    { href: "image-cropper", label: "Image Cropper" },
-  ];
+const tools = [
+  { href: "jpeg-to-png", label: "jpeg to png" },
+  { href: "heic-to-png", label: "heic to png" },
+  { href: "webp-to-png", label: "webp to png" },
+  { href: "formatter/json", label: "JSON formatter" },
+  { href: "color-picker", label: "Color Picker" },
+  { href: "image-cropper", label: "Image Cropper" },
+];
 
+export default function LandingPage() {
   return (
     <div className="max-w-3xl m-auto">
       <section className="text-center pt-20">
