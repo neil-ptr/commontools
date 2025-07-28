@@ -5,8 +5,14 @@ import { motion } from "motion/react";
 import * as React from "react";
 import Editor, { OnMount } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
-import { useRef, useState } from "react";
-import { CircleCheck, Clipboard, Expand, Minimize } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  BrushCleaning,
+  CircleCheck,
+  Clipboard,
+  Expand,
+  Minimize,
+} from "lucide-react";
 import { toast } from "sonner";
 
 const CodeFormatter = () => {
@@ -15,6 +21,15 @@ const CodeFormatter = () => {
   const [formatSuccess, setFormatSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [isFullScreen, setExpanded] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      editorRef.current?.layout();
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleEditorMount: OnMount = (editor) => {
     editorRef.current = editor;
@@ -87,19 +102,19 @@ const CodeFormatter = () => {
       <motion.div
         layout
         layoutDependency={isFullScreen}
+        animate={isFullScreen ? "fullScreen" : "collapsed"}
         initial={{
           maxWidth: "66%",
           margin: "auto",
           padding: "0 1rem",
-          height: "500px",
+          height: "400px",
         }}
-        animate={isFullScreen ? "fullScreen" : "collapsed"}
         variants={{
           collapsed: {
             maxWidth: "66%",
             padding: "0 1rem",
             margin: "auto",
-            height: "500px",
+            height: "400px",
           },
           fullScreen: {
             maxWidth: "100%",
@@ -112,7 +127,12 @@ const CodeFormatter = () => {
       >
         <div className="border-t border-x rounded-t-md px-3 py-2 flex items-center justify-between min-w-fit gap-6">
           <div className="flex gap-2 items-center">
-            <Button size="sm" onClick={handleFormat} className="font-semibold">
+            <Button
+              size="sm"
+              onClick={handleFormat}
+              className="font-semibold flex items-center"
+            >
+              <BrushCleaning size={16} fontWeight={500} />
               Format
             </Button>
 
@@ -140,27 +160,28 @@ const CodeFormatter = () => {
             {isFullScreen ? <Minimize /> : <Expand />}
           </Button>
         </div>
-        <Editor
-          language="json"
-          theme="vs-dark"
-          height="100%"
-          className="border border-input"
-          onMount={handleEditorMount}
-          options={{
-            automaticLayout: true,
-            placeholder: "...paste your code",
-            suggestOnTriggerCharacters: false,
-            quickSuggestions: false,
-            wordBasedSuggestions: "off",
-            parameterHints: { enabled: false },
-            tabCompletion: "off",
-            inlineSuggest: { enabled: false },
-            fontFamily:
-              "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-            fontSize: 14,
-            lineNumbers: "on",
-          }}
-        />
+        <div className="grow min-h-0">
+          <Editor
+            language="json"
+            theme="vs-dark"
+            height="100%"
+            className="border border-input"
+            onMount={handleEditorMount}
+            options={{
+              automaticLayout: true,
+              suggestOnTriggerCharacters: false,
+              quickSuggestions: false,
+              wordBasedSuggestions: "off",
+              parameterHints: { enabled: false },
+              tabCompletion: "off",
+              inlineSuggest: { enabled: false },
+              fontFamily:
+                "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+              fontSize: 14,
+              lineNumbers: "on",
+            }}
+          />
+        </div>
 
         <div className="border-b border-x rounded-b-md px-3 py-2 flex items-center justify-between min-w-fit"></div>
       </motion.div>
