@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { motion } from "motion/react";
 import * as React from "react";
 import Editor, { OnMount } from "@monaco-editor/react";
-import * as monaco from "monaco-editor";
+import type * as monaco from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
 import {
   BrushCleaning,
@@ -33,6 +33,29 @@ const CodeFormatter = () => {
 
   const handleEditorMount: OnMount = (editor) => {
     editorRef.current = editor;
+
+    // Listen for paste or content change
+    editor.onDidPaste(() => {
+      scrollToBottomLeft(editor);
+    });
+
+    // Optional: Also handle manual typing that adds lines
+    // editor.onDidChangeModelContent(() => {
+    //   scrollToBottomLeft(editor);
+    // });
+  };
+
+  const scrollToBottomLeft = (editor: monaco.editor.IStandaloneCodeEditor) => {
+    const model = editor.getModel();
+    if (!model) return;
+
+    const lastLine = model.getLineCount();
+
+    editor.revealLineNearTop(lastLine);
+
+    editor.setScrollPosition({
+      scrollLeft: 0,
+    });
   };
 
   const handleFormat = () => {
@@ -63,7 +86,9 @@ const CodeFormatter = () => {
     try {
       const code = editorRef.current?.getValue() || "";
       await navigator.clipboard.writeText(code);
-      toast("Copied to clipboard!");
+      toast("Code successfully copied to clipboard!", {
+        position: "bottom-left",
+      });
     } catch (err) {
       console.error("Failed to copy: ", err);
     }
