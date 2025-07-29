@@ -18,7 +18,7 @@ export default function FormatterPage() {
           locally.
         </p>
       </div>
-      <CodeFormatter />;
+      <CodeFormatter />
     </>
   );
 }
