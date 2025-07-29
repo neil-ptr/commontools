@@ -34,15 +34,9 @@ const CodeFormatter = () => {
   const handleEditorMount: OnMount = (editor) => {
     editorRef.current = editor;
 
-    // Listen for paste or content change
     editor.onDidPaste(() => {
       scrollToBottomLeft(editor);
     });
-
-    // Optional: Also handle manual typing that adds lines
-    // editor.onDidChangeModelContent(() => {
-    //   scrollToBottomLeft(editor);
-    // });
   };
 
   const scrollToBottomLeft = (editor: monaco.editor.IStandaloneCodeEditor) => {
