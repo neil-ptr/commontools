@@ -14,9 +14,11 @@ import {
   Minimize,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useDarkModeClassObserver } from "@/hooks/useDarkModeClassObserver";
 
 const CodeFormatter = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const isDark = useDarkModeClassObserver();
 
   const [formatSuccess, setFormatSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -182,7 +184,7 @@ const CodeFormatter = () => {
         <div className="grow min-h-0">
           <Editor
             language="json"
-            theme="vs-dark"
+            theme={isDark ? "vs-dark" : "light"}
             height="100%"
             className="border border-input"
             onMount={handleEditorMount}
