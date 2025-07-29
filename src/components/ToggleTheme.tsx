@@ -27,7 +27,11 @@ const ToggleTheme = () => {
 
   return (
     <Button variant="ghost" onClick={toggleTheme}>
-      {isDark ? <Sun /> : <Moon />}
+      {isDark ? (
+        <Sun className="text-yellow-400" />
+      ) : (
+        <Moon className="text-violet-400" />
+      )}
     </Button>
   );
 };
