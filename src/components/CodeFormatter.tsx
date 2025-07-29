@@ -110,7 +110,7 @@ const CodeFormatter = () => {
             paddingBottom: 0,
           },
         }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
         className="text-center max-w-3xl m-auto overflow-hidden px-4"
       >
         <h1 className="text-hero">JSON Formatter</h1>
@@ -143,7 +143,7 @@ const CodeFormatter = () => {
             height: "100%",
           },
         }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
         className="flex flex-col"
       >
         <div className="border-t border-x rounded-t-md px-3 py-2 flex items-center justify-between min-w-fit gap-6">
