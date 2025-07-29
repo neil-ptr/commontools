@@ -1,9 +1,9 @@
+"use client";
+
 import { useEffect, useState } from "react";
 
 export function useDarkModeClassObserver() {
-  const [isDark, setIsDark] = useState(
-    document.documentElement.classList.contains("dark"),
-  );
+  const [isDark, setIsDark] = useState<boolean | null>(null);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -12,21 +12,13 @@ export function useDarkModeClassObserver() {
       setIsDark(root.classList.contains("dark"));
     };
 
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (
-          mutation.type === "attributes" &&
-          mutation.attributeName === "class"
-        ) {
-          updateTheme();
-        }
-      }
-    });
+    updateTheme();
 
-    observer.observe(root, { attributes: true });
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
 
     return () => observer.disconnect();
   }, []);
 
-  return isDark;
+  return Boolean(isDark);
 }
