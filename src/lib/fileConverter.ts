@@ -1,3 +1,26 @@
+export type ImageType = "jpg" | "jpeg" | "png" | "webp" | "heic";
+
+export type FileConversionItem = {
+  id: string;
+  file: File;
+  format?: ImageType;
+};
+
+export type ImageMimeType =
+  | "image/jpeg"
+  | "image/png"
+  | "image/webp"
+  | "image/jpeg"
+  | "image/heic";
+
+export const extensionToMimeType: Record<ImageType, ImageMimeType> = {
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+  heic: "image/heic",
+};
+
 export const fileConverterSlugs = [
   "jpeg-to-jpg",
   "jpeg-to-png",
@@ -23,23 +46,6 @@ export const fileConverterSlugs = [
   "jpeg-converter",
   "heic-converter",
 ];
-
-export type ImageType = "jpg" | "jpeg" | "png" | "webp" | "heic";
-
-export type ImageMimeType =
-  | "image/jpeg"
-  | "image/png"
-  | "image/webp"
-  | "image/jpeg"
-  | "image/heic";
-
-export const extensionToMimeType: Record<ImageType, ImageMimeType> = {
-  jpg: "image/jpeg",
-  jpeg: "image/jpeg",
-  png: "image/png",
-  webp: "image/webp",
-  heic: "image/heic",
-};
 
 export const getAcceptedFormat = (imageType: ImageType) => {
   if (imageType === "jpg" || imageType === "jpeg") return ".jpg,.jpeg";

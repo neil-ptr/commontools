@@ -7,37 +7,42 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { X, Image as ImageIcon } from "lucide-react";
-import { formatFileSize, ImageType, middleEllipsis } from "@/lib/fileConverter";
+import {
+  FileConversionItem,
+  formatFileSize,
+  ImageType,
+  middleEllipsis,
+} from "@/lib/fileConverter";
+import { cn } from "@/lib/utils";
 
 type FileListItemProps = {
-  name: string;
-  size: number;
+  fileConversionItem: FileConversionItem;
   sourceFormat: ImageType;
-  targetFormat: ImageType;
   converting: boolean;
+  dirty: boolean;
   onRemove: () => void;
   onSelectFormat: (format: ImageType) => void;
 };
 
 const FileListItem = ({
-  name,
-  size,
+  fileConversionItem,
   sourceFormat,
-  targetFormat,
   onRemove,
+  dirty,
   converting,
   onSelectFormat,
 }: FileListItemProps) => {
-  const displayName = middleEllipsis(name, 30);
+  const { id, file, format: targetFormat } = fileConversionItem;
+  const displayName = middleEllipsis(fileConversionItem.file.name, 30);
 
   return (
-    <li key={name} className="pb-4 animate min-w-fit">
+    <li id={id} className="pb-4 animate min-w-fit">
       <div className="border p-4 flex items-center rounded-sm justify-between gap-4">
         <div className="flex items-center gap-1">
           <ImageIcon size={24} className="text-orange-500 shrink-0" />
           <div className="font-semibold">{displayName}</div>
           <div className="text-muted-foreground text-sm">
-            {formatFileSize(size)}
+            {formatFileSize(file.size)}
           </div>
         </div>
 
@@ -47,7 +52,12 @@ const FileListItem = ({
             disabled={converting}
             onValueChange={(format) => onSelectFormat(format as ImageType)}
           >
-            <SelectTrigger className="max-w-fit cursor-pointer">
+            <SelectTrigger
+              className={cn(
+                "max-w-fit cursor-pointer",
+                dirty && !targetFormat && "border border-red-500",
+              )}
+            >
               <SelectValue placeholder="Format" />
             </SelectTrigger>
             <SelectContent>
