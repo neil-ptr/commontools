@@ -2,13 +2,6 @@
 
 import JSZip from "jszip";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { saveAs } from "file-saver";
 import { useEffect, useRef, useState } from "react";
 import FileListItem from "./FileListItem";
@@ -22,6 +15,8 @@ import {
   ImageType,
 } from "@/lib/fileConverter";
 import { toast } from "sonner";
+import SelectFormat from "./SelectFormat";
+import { ImageOff } from "lucide-react";
 
 type FileConverterProps = {
   sourceFormat: ImageType;
@@ -63,13 +58,15 @@ const FileConverter = ({
 
     if (!e.target.files) return;
 
-    setFiles(
-      Array.from(e.target.files).map((file) => ({
-        id: crypto.randomUUID(),
-        format: targetFormat,
-        file,
-      })),
-    );
+    const newFiles = Array.from(e.target.files).map((file) => ({
+      id: crypto.randomUUID(),
+      format: targetFormat,
+      file,
+    }));
+
+    setFiles((prevFiles) => {
+      return [...prevFiles, ...newFiles];
+    });
 
     setShouldScroll(true);
   };
@@ -131,66 +128,90 @@ const FileConverter = ({
     setFiles(newFiles);
   };
 
-  const handleSelectFormat = (index: number, format: ImageType) => {
+  const handleSelectIndividualFileFormat = (
+    index: number,
+    format: ImageType,
+  ) => {
     setFiles((prevFiles) =>
       prevFiles.map((item, i) => (i === index ? { ...item, format } : item)),
     );
   };
+
+  const handleSelectTargetFormat = (format: ImageType) => {
+    setTargetFormat(format);
+
+    setFiles((prevFiles) =>
+      prevFiles.map((fileConversionItem) => ({
+        ...fileConversionItem,
+        format,
+      })),
+    );
+  };
+
+  console.log(files);
 
   return (
     <div className="space-y-4">
       {files.length > 0 ? (
         <div className="animate-in slide-in-from-bottom-[20px] fade-in ease-out">
           <ul>
-            {files.map((fileConversionIttem, index) => (
+            {files.map((fileConversionItem, index) => (
               <FileListItem
-                key={fileConversionIttem.file.name}
-                fileConversionItem={fileConversionIttem}
+                key={fileConversionItem.id}
+                fileConversionItem={fileConversionItem}
                 dirty={submitDirty}
                 sourceFormat={sourceFormat}
                 converting={converting}
                 onRemove={() => handleRemove(index)}
-                onSelectFormat={(format) => handleSelectFormat(index, format)}
+                onSelectFormat={(format) =>
+                  handleSelectIndividualFileFormat(index, format)
+                }
               />
             ))}
           </ul>
-          <div className="flex justify-end gap-6 items-center ">
-            <Select
-              defaultValue={targetFormat}
-              disabled={converting}
-              onValueChange={(format) => setTargetFormat(format as ImageType)}
-            >
-              <SelectTrigger className={"max-w-fit cursor-pointer"}>
-                <SelectValue placeholder="Format" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="png" disabled={sourceFormat === "png"}>
-                  PNG
-                </SelectItem>
-                <SelectItem
-                  value="jpeg"
-                  disabled={sourceFormat === "jpeg" || sourceFormat === "jpg"}
-                >
-                  JPEG/JPG
-                </SelectItem>
-                <SelectItem value="webp" disabled={sourceFormat === "webp"}>
-                  WebP
-                </SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex justify-between">
+            <div className="flex gap-4">
+              <Button className="font-semibold" onClick={handleSelectFiles}>
+                <input
+                  ref={fileInputRef}
+                  id="file-upload"
+                  type="file"
+                  accept={getAcceptedFormat(sourceFormat)}
+                  multiple
+                  onChange={handleChange}
+                  className="hidden"
+                />
+                Add More
+              </Button>
+              <Button className="font-semibold" onClick={() => setFiles([])}>
+                <ImageOff /> Clear
+              </Button>
+            </div>
 
-            <Button
-              id="download-converted-files-button"
-              className="font-semibold"
-              onClick={handleConvertAndDownload}
-              disabled={converting}
-            >
-              {converting ? <Spinner /> : "Convert & Download"}
-            </Button>
+            <div className="flex justify-end gap-4 items-center ">
+              <SelectFormat
+                sourceFormat={sourceFormat}
+                targetFormat={targetFormat}
+                converting={converting}
+                onSelectTargetFormat={handleSelectTargetFormat}
+              />
+
+              <Button
+                id="download-converted-files-button"
+                className="font-semibold"
+                onClick={handleConvertAndDownload}
+                disabled={converting}
+              >
+                {converting ? <Spinner /> : "Convert & Download"}
+              </Button>
+            </div>
           </div>
         </div>
       ) : (
-        <label htmlFor="file-upload" className="bg-transparent">
+        <label
+          htmlFor="file-upload"
+          className="bg-transparent animate-in fade-in"
+        >
           <div className="p-2 bg-accent rounded-lg">
             <div className="block cursor-pointer rounded-xl border border-dashed border-muted-foreground p-4 py-10 text-center transition">
               <div className="py-20">

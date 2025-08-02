@@ -1,10 +1,3 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { X, Image as ImageIcon } from "lucide-react";
 import {
@@ -13,7 +6,7 @@ import {
   ImageType,
   middleEllipsis,
 } from "@/lib/fileConverter";
-import { cn } from "@/lib/utils";
+import SelectFormat from "@/components/FileConverter/SelectFormat";
 
 type FileListItemProps = {
   fileConversionItem: FileConversionItem;
@@ -28,7 +21,6 @@ const FileListItem = ({
   fileConversionItem,
   sourceFormat,
   onRemove,
-  dirty,
   converting,
   onSelectFormat,
 }: FileListItemProps) => {
@@ -47,34 +39,13 @@ const FileListItem = ({
         </div>
 
         <div className="flex items-center gap-4">
-          <Select
-            defaultValue={targetFormat}
-            disabled={converting}
-            onValueChange={(format) => onSelectFormat(format as ImageType)}
-          >
-            <SelectTrigger
-              className={cn(
-                "max-w-fit cursor-pointer",
-                dirty && !targetFormat && "border border-red-500",
-              )}
-            >
-              <SelectValue placeholder="Format" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="png" disabled={sourceFormat === "png"}>
-                PNG
-              </SelectItem>
-              <SelectItem
-                value="jpeg"
-                disabled={sourceFormat === "jpeg" || sourceFormat === "jpg"}
-              >
-                JPEG/JPG
-              </SelectItem>
-              <SelectItem value="webp" disabled={sourceFormat === "webp"}>
-                WebP
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          <SelectFormat
+            sourceFormat={sourceFormat}
+            targetFormat={targetFormat}
+            converting={converting}
+            onSelectTargetFormat={onSelectFormat}
+          />
+
           <Button
             className="cursor-pointer"
             onClick={() => onRemove()}
